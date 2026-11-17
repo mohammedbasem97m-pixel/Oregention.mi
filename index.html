@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شعبة المنظمات - قائممقامية قضاء الفلوجة</title>
+<style>
+:root{font-family:Tahoma,Arial,sans-serif;color:#172033;background:#f4f6fa}
+*{box-sizing:border-box}body{margin:0;padding:22px}
+main{max-width:1150px;margin:auto;background:#fff;border:1px solid #e4e8f0;border-radius:18px;padding:22px;box-shadow:0 8px 28px #18243a0c}
+h1{margin:0 0 8px;font-size:25px}.sub{color:#687386;margin:0 0 20px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+input,select,button{font:inherit;border:1px solid #d5dbe6;border-radius:10px;padding:10px 12px;background:#fff}
+#orgName{flex:1;min-width:220px}#search{min-width:200px;flex:1}
+button{cursor:pointer;background:#1e477d;color:#fff;border-color:#1e477d}
+button.secondary{background:#fff;color:#24344d;border-color:#d5dbe6}
+button:disabled{opacity:.45;cursor:not-allowed}
+.file-button{display:inline-flex;align-items:center;border:1px solid #1e477d;border-radius:10px;padding:10px 12px;background:#fff;color:#1e477d;cursor:pointer}
+.stats{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 16px;color:#536176;font-size:14px}
+.pill{background:#f0f4fa;border-radius:999px;padding:7px 12px}
+.table-wrap{overflow:auto;border:1px solid #e5e9f0;border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th,td{padding:11px 12px;border-bottom:1px solid #edf0f4;text-align:center}
+th{background:#f7f9fc;color:#34445d;font-weight:700;position:sticky;top:0}
+td:first-child,th:first-child{text-align:right;width:70px}
+td:nth-child(2),th:nth-child(2){text-align:right;min-width:240px}
+td select{min-width:92px;padding:7px}
+.name-edit{width:100%;text-align:right}
+.remove{background:#fff;color:#b42318;border-color:#f0c9c6;padding:6px 10px}
+.empty{text-align:center;color:#7a8494;padding:28px}
+footer{font-size:12px;color:#7a8494;margin-top:14px;line-height:1.8}
+@media(max-width:600px){body{padding:10px}main{padding:14px}h1{font-size:21px}}
+@page{size:A4 landscape;margin:10mm 10mm 18mm}
+
+.print-footer{display:none}
+@media print{
+  html,body{background:#fff!important;color:#000!important;margin:0!important;padding:0!important}
+  main{max-width:none!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+  h1{text-align:center;font-size:18pt;margin:0 0 5mm!important;color:#000!important}
+  .sub,.toolbar,.stats,footer{display:none!important}
+  .table-wrap{overflow:visible!important;border:0!important;border-radius:0!important}
+  table{width:100%!important;min-width:0!important;border-collapse:collapse!important;table-layout:fixed}
+  th,td{border:1px solid #555!important;padding:5px 6px!important;font-size:10pt!important;color:#000!important;background:#fff!important}
+  th{position:static!important;font-weight:bold!important}
+  th:first-child,td:first-child,th:last-child,td:last-child{display:none!important}
+  td:nth-child(2),th:nth-child(2){min-width:0!important;width:32%!important}
+  td select{appearance:none!important;-webkit-appearance:none!important;border:0!important;background:transparent!important;color:#000!important;padding:0!important;margin:0!important;width:100%!important;min-width:0!important;font-size:9pt!important;text-align:center!important;text-align-last:center!important}
+  .name-edit{border:0!important;background:transparent!important;padding:0!important;width:100%!important;color:#000!important;font-size:10pt!important}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead{display:table-header-group}
+  .print-footer{display:block!important;position:fixed!important;bottom:-12mm!important;left:0!important;right:0!important;width:100%!important;text-align:center!important;margin:0!important;font-size:12pt!important;font-weight:bold!important;color:#000!important}
+
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>شعبة المنظمات<br>قائممقامية قضاء الفلوجة</h1>
+  <p class="sub">أدخل أسماء ما يصل إلى 250 منظمة، وحدد حالة كل منظمة في السنوات 2023–2026.</p>
+  <div class="toolbar">
+    <button id="newTableBtn">جدول جديد</button>
+    <button id="addFieldBtn" class="secondary">إضافة حقل</button>
+    <button id="removeFieldBtn" class="secondary">حذف حقل</button>
+    <select id="savedTables" aria-label="الجداول المحفوظة">
+      <option value="">الجداول المحفوظة</option>
+    </select>
+    <button class="secondary" id="openSavedBtn">فتح الجدول المحفوظ</button>
+    <input id="orgName" maxlength="120" placeholder="اكتب اسم المنظمة هنا">
+    <button id="addBtn">إضافة منظمة</button>
+    <label for="wordFile" class="file-button">إضافة ملف Word</label>
+    <input id="wordFile" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+    <input id="search" placeholder="بحث عن منظمة...">
+    <button class="secondary" id="clearAllBtn" style="background:#fff;color:#b42318;border-color:#f0c9c6">مسح الكل</button>
+    <button class="secondary" id="backupTablesBtn">نسخ احتياطي للجداول</button>
+    <label class="file-button" for="restoreTablesFile">استعادة الجداول</label>
+<input id="restoreTablesFile" type="file" accept=".json,application/json" hidden>
+    <button class="secondary" id="exportBtn">تصدير CSV</button>
+    <button class="secondary" id="printBtn">طباعة</button>
+  </div>
+  <div class="stats">
+    <span class="pill">عدد المنظمات: <b id="count">0</b> / 250</span>
+    <span class="pill">✓ نعم / مكتمل</span>
+    <span class="pill">× لا / غير مكتمل</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr id="tableHeader"><th>ت</th><th>اسم المنظمة</th><th>حذف</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <div class="print-footer">قائممامية الفلوجة - شعبة المنظمات</div>
+  <footer>يتم حفظ التعديلات تلقائياً على هذا الجهاز والمتصفح. استخدم «تصدير CSV» للاحتفاظ بنسخة خارجية من البيانات.</footer>
+</main>
+<script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<script>
+const KEY='org-tracker-250-v1', FIELD_KEY='org-tracker-fields-v1';
+const ARCHIVE_KEY='org-tracker-archives-v1';
+const $=id=>document.getElementById(id);
+let orgs=[], fields=[], savedTables=[];
+try{orgs=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(orgs))orgs=[];}catch(e){orgs=[];}
+try{fields=JSON.parse(localStorage.getItem(FIELD_KEY)||'[]');if(!Array.isArray(fields))fields=[];}catch(e){fields=[];}
+try{savedTables=JSON.parse(localStorage.getItem(ARCHIVE_KEY)||'[]');if(!Array.isArray(savedTables))savedTables=[];}catch(e){savedTables=[];}
+
+// Preserve data from the former fixed year columns as editable custom columns.
+if(!fields.length && orgs.some(o=>['2023','2024','2025','2026'].some(y=>o[y]!==undefined))){
+ fields=['2023','2024','2025','2026'];
+ localStorage.setItem(FIELD_KEY,JSON.stringify(fields));
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(orgs));}
+function saveFields(){localStorage.setItem(FIELD_KEY,JSON.stringify(fields));}
+function saveArchives(){localStorage.setItem(ARCHIVE_KEY,JSON.stringify(savedTables));}
+
+function refreshSavedTables(){
+ const select=$('savedTables');
+ select.innerHTML='<option value="">الجداول المحفوظة</option>';
+ savedTables.forEach((item,index)=>{
+  const option=document.createElement('option');
+  option.value=String(index);
+  option.textContent=item.title+' ('+item.orgs.length+' منظمة)';
+  select.appendChild(option);
+ });
+}
+function startNewTable(){
+ if(!orgs.length && !fields.length){alert('الجدول الحالي فارغ بالفعل.');return;}
+ if(!confirm('سيتم حفظ الجدول الحالي وحقوله ضمن الجداول المحفوظة ثم فتح جدول جديد فارغ بحقول مستقلة. هل تريد المتابعة؟'))return;
+ savedTables.unshift({title:'جدول محفوظ - '+new Date().toLocaleString('ar-IQ'),orgs:JSON.parse(JSON.stringify(orgs)),fields:[...fields]});
+ saveArchives();
+ orgs=[]; fields=[];
+ save(); saveFields();
+ $('orgName').value=''; $('search').value='';
+ render(); refreshSavedTables();
+ alert('تم حفظ الجدول السابق وفتح جدول جديد فارغ. أضف الحقول التي تحتاجها لهذا الجدول.');
+}
+function openSavedTable(){
+ const value=$('savedTables').value;
+ if(value===''){alert('اختر جدولاً محفوظاً أولاً.');return;}
+ const index=Number(value), item=savedTables[index];
+ if(!Number.isInteger(index)||!item){alert('الجدول المحفوظ غير موجود.');refreshSavedTables();return;}
+ if((orgs.length||fields.length)&&!confirm('سيتم استبدال الجدول الحالي. هل تريد المتابعة؟'))return;
+ orgs=JSON.parse(JSON.stringify(item.orgs||[]));
+ fields=Array.isArray(item.fields)?[...item.fields]:[];
+ // Compatibility with archived tables created before custom fields.
+ if(!fields.length && orgs.some(o=>['2023','2024','2025','2026'].some(y=>o[y]!==undefined))) fields=['2023','2024','2025','2026'];
+ save(); saveFields();
+ $('orgName').value=''; $('search').value='';
+ render();
+ alert('تم فتح الجدول المحفوظ مع حقوله الخاصة.');
+}
+function addField(){
+ const name=prompt('اكتب اسم الحقل الجديد، مثلاً: المحافظة أو رقم الكتاب أو تاريخ النشاط أو الملاحظات');
+ if(name===null)return;
+ const clean=name.trim();
+ if(!clean){alert('اكتب اسم الحقل أولاً.');return;}
+ if(fields.some(f=>f.toLocaleLowerCase()===clean.toLocaleLowerCase())){alert('هذا الحقل موجود بالفعل.');return;}
+ if(fields.length>=20){alert('يمكن إضافة 20 حقلاً كحد أقصى.');return;}
+ fields.push(clean);
+ orgs.forEach(o=>{if(!(clean in o))o[clean]='';});
+ saveFields();save();render();
+}
+function removeField(){
+ if(!fields.length){alert('لا توجد حقول لحذفها.');return;}
+ const name=prompt('اكتب اسم الحقل الذي تريد حذفه:\n'+fields.join('، '));
+ if(name===null)return;
+ const index=fields.findIndex(f=>f.toLocaleLowerCase()===name.trim().toLocaleLowerCase());
+ if(index<0){alert('لم أجد هذا الحقل. تأكد من كتابة اسمه كما يظهر في الجدول.');return;}
+ const removed=fields[index];
+ if(!confirm('هل تريد حذف الحقل «'+removed+'» وجميع بياناته من هذا الجدول؟'))return;
+ fields.splice(index,1);
+ orgs.forEach(o=>delete o[removed]);
+ saveFields();save();render();
+}
+function render(){
+ const q=$('search').value.trim().toLocaleLowerCase();
+ const shown=orgs.map((o,i)=>({...o,index:i})).filter(o=>(o.name||'').toLocaleLowerCase().includes(q));
+ $('count').textContent=orgs.length;
+ $('addBtn').disabled=orgs.length>=250;
+ const header=$('tableHeader');
+ header.innerHTML='';
+ ['ت','اسم المنظمة',...fields,'حذف'].forEach(label=>{
+  const th=document.createElement('th'); th.textContent=label; header.appendChild(th);
+ });
+ const rows=$('rows'); rows.innerHTML='';
+ if(!shown.length){
+  const tr=document.createElement('tr'),td=document.createElement('td');
+  td.colSpan=fields.length+3;td.className='empty';td.textContent='لا توجد منظمات للعرض';
+  tr.appendChild(td);rows.appendChild(tr);return;
+ }
+ shown.forEach(o=>{
+  const tr=document.createElement('tr');
+  const num=document.createElement('td');num.textContent=o.index+1;tr.appendChild(num);
+  const nameTd=document.createElement('td'),name=document.createElement('input');
+  name.className='name-edit';name.value=o.name||'';name.maxLength=120;name.setAttribute('aria-label','اسم المنظمة');
+  name.addEventListener('change',()=>{orgs[o.index].name=name.value.trim()||'منظمة بدون اسم';save();render();});
+  nameTd.appendChild(name);tr.appendChild(nameTd);
+  fields.forEach(field=>{
+   const td=document.createElement('td'),input=document.createElement('input');
+   input.type='text';input.value=o[field]||'';input.setAttribute('aria-label',field);
+   input.style.width='100%';input.style.minWidth='110px';
+   input.addEventListener('change',()=>{orgs[o.index][field]=input.value;save();});
+   td.appendChild(input);tr.appendChild(td);
+  });
+  const delTd=document.createElement('td'),del=document.createElement('button');
+  del.className='remove';del.textContent='حذف';
+  del.addEventListener('click',()=>{if(confirm('هل تريد حذف هذه المنظمة؟')){orgs.splice(o.index,1);save();render();}});
+  delTd.appendChild(del);tr.appendChild(delTd);rows.appendChild(tr);
+ });
+}
+function add(){
+ const name=$('orgName').value.trim();if(!name){$('orgName').focus();return;}
+ if(orgs.length>=250){alert('وصلت إلى الحد الأقصى: 250 منظمة');return;}
+ const item={name};fields.forEach(f=>item[f]='');
+ orgs.push(item);$('orgName').value='';save();render();$('orgName').focus();
+}
+$('addBtn').addEventListener('click',add);
+$('newTableBtn').addEventListener('click',startNewTable);
+$('openSavedBtn').addEventListener('click',openSavedTable);
+$('addFieldBtn').addEventListener('click',addField);
+$('removeFieldBtn').addEventListener('click',removeField);
+$('orgName').addEventListener('keydown',e=>{if(e.key==='Enter')add();});
+
+$('search').addEventListener('input',render);
+$('printBtn').addEventListener('click',()=>window.print());
+let searchBeforePrint='';
+window.addEventListener('beforeprint',()=>{searchBeforePrint=$('search').value;$('search').value='';render();});
+window.addEventListener('afterprint',()=>{$('search').value=searchBeforePrint;render();});
+
+$('clearAllBtn').addEventListener('click',()=>{
+ if(!orgs.length){alert('لا توجد بيانات لمسحها.');return;}
+ if(confirm('هل أنت متأكد من مسح جميع المنظمات والبيانات؟ لا يمكن التراجع عن هذا الإجراء.')){
+  orgs=[];save();render();$('orgName').value='';$('search').value='';
+  alert('تم مسح جميع المنظمات والبيانات بنجاح.');
+ }
+});
+$('exportBtn').addEventListener('click',()=>{
+ const data=[['ت','اسم المنظمة',...fields],...orgs.map((o,i)=>[i+1,o.name,...fields.map(f=>o[f]||'')])];
+ const csv='\uFEFF'+data.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='سجل-المنظمات.csv';a.click();URL.revokeObjectURL(url);
+});
+
+function importWordRows(file){
+ return new Promise(async (resolve,reject)=>{
+  try{
+   if(!window.mammoth) throw new Error('تعذّر تحميل قارئ Word. تأكد من اتصال الإنترنت ثم أعد المحاولة.');
+   const result=await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()});
+   const doc=new DOMParser().parseFromString(result.value,'text/html');
+   const tables=[...doc.querySelectorAll('table')];
+   if(!tables.length) throw new Error('لم أجد جدولاً داخل ملف Word.');
+   const imported=[];
+   let detectedFields=[];
+   for(const table of tables){
+    const rows=[...table.querySelectorAll('tr')].map(tr=>[...tr.querySelectorAll('th,td')].map(c=>(c.innerText||c.textContent||'').replace(/\s+/g,' ').trim()));
+    if(!rows.length) continue;
+    const header=rows[0];
+    const headerLooksLikeHeader=header.some(c=>/اسم المنظمة|المنظمة|اسم الجهة|الجهة/i.test(c));
+    if(headerLooksLikeHeader){
+      const nameIndex=Math.max(0,header.findIndex(c=>/اسم المنظمة|المنظمة|اسم الجهة|الجهة/i.test(c)));
+      const candidate=header.filter((c,i)=>i!==nameIndex && c && !/^ت$|^تسلسل$|^العدد$|^حذف$/i.test(c));
+      if(!detectedFields.length) detectedFields=candidate;
+      for(const cells of rows.slice(1)){
+       const name=(cells[nameIndex]||'').trim();
+       if(!name || /^\d+$/.test(name)) continue;
+       const item={name};
+       candidate.forEach((field,idx)=>{
+        const originalIndex=header.indexOf(field);
+        item[field]=cells[originalIndex]||'';
+       });
+       imported.push(item);
+      }
+    }else{
+      // Fallback for a simple Word table: serial, organization name, then data columns.
+      for(const cells of rows){
+       if(cells.length<2) continue;
+       const name=(cells[1]||'').trim();
+       if(!name || /^اسم المنظمة|المنظمة$/i.test(name) || /^\d+$/.test(name)) continue;
+       if(!detectedFields.length){
+        detectedFields=cells.slice(2).map((_,i)=>fields[i]||('حقل '+(i+1)));
+       }
+       const item={name};
+       detectedFields.forEach((field,idx)=>item[field]=cells[idx+2]||'');
+       imported.push(item);
+      }
+    }
+   }
+   if(!imported.length) throw new Error('لم أتمكن من استخراج أسماء المنظمات من جدول Word.');
+   resolve({imported,detectedFields});
+  }catch(err){reject(err);}
+ });
+}
+const wordInput=$('wordFile');
+if(wordInput){
+ wordInput.addEventListener('change',async e=>{
+  const file=e.target.files[0]; if(!file)return;
+  try{
+   const result=await importWordRows(file);
+   if(!fields.length && result.detectedFields.length) fields=[...result.detectedFields];
+   // Keep custom field set authoritative; fill missing cells without losing imported data.
+   result.imported.forEach(item=>{
+    const row={name:item.name};
+    fields.forEach(f=>row[f]=item[f]??'');
+    orgs.push(row);
+   });
+   const room=250-orgs.length;
+   if(room<0){orgs=orgs.slice(0,250);}
+   save();saveFields();render();
+   alert('تم استيراد '+Math.min(result.imported.length,250)+' منظمة من ملف Word.');
+  }catch(err){alert('تعذّر استيراد ملف Word: '+err.message);}
+  finally{e.target.value='';}
+ });
+}
+$('backupTablesBtn')?.addEventListener('click',()=>{
+ const payload={version:1,active:{orgs,fields},savedTables};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='نسخة-احتياطية-للمنظمات.json';a.click();URL.revokeObjectURL(url);
+});
+$('restoreTablesFile')?.addEventListener('change',async e=>{
+ const file=e.target.files[0];if(!file)return;
+ try{
+  const payload=JSON.parse(await file.text());
+  if(!payload || !payload.active || !Array.isArray(payload.active.orgs) || !Array.isArray(payload.savedTables)) throw new Error('ملف النسخة الاحتياطية غير صالح.');
+  if(!confirm('سيتم استبدال الجداول الحالية بالنسخة الاحتياطية. هل تريد المتابعة؟'))return;
+  orgs=payload.active.orgs;
+  fields=Array.isArray(payload.active.fields)?payload.active.fields:[];
+  savedTables=payload.savedTables;
+  save();saveFields();saveArchives();refreshSavedTables();render();
+  alert('تمت استعادة الجداول بنجاح.');
+ }catch(err){alert('تعذّرت استعادة النسخة: '+err.message);}
+ finally{e.target.value='';}
+});
+
+window.addEventListener('pagehide',()=>{save();saveFields();saveArchives();});
+refreshSavedTables();
+render();
+</script>
+</body>
+</html>
